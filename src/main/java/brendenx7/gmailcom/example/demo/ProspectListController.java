@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 
@@ -19,13 +20,16 @@ public class ProspectListController {
      * @return filtered Excel file as download (currently just echoes the target file)
      */
     @PostMapping("/filter")
-    public ResponseEntity<ByteArrayResource> filter() {
+    public ResponseEntity<ByteArrayResource> filter(@RequestParam("targetList") MultipartFile targetList,
+                                                    @RequestParam("dataSource") MultipartFile dataSource) {
         try {
-            // Load the Excel files from the classpath (resources folder)
-            ClassPathResource targetListResource = new ClassPathResource("targetList.xlsx");
-            ClassPathResource datasourceResource = new ClassPathResource("datasource.xlsx");
 
-            // Read bytes from targetList.xlsx (you can also read datasource if needed)
+           // TODO: Write log statement to check if datasource/targetList is being read NULL or Not NULL
+            // Load the Excel files from the classpath (resources folder
+            ClassPathResource targetListResource = new ClassPathResource("filteredList.xlsx");
+
+
+            // Read bytes from filteredList.xlsx (you can also read datasource if needed)
             byte[] excelBytes;
             try (InputStream targetInputStream = targetListResource.getInputStream()) {
                 excelBytes = targetInputStream.readAllBytes();

@@ -1,0 +1,46 @@
+{
+	"info": {
+		"_postman_id": "e26456e3-b058-4aa9-9da3-cd2d57e85b94",
+		"name": "List-Builder-Filter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45481784",
+		"_collection_link": "https://brenden-9931159.postman.co/workspace/Brenden's-Workspace~3f32f4a6-0726-46e9-8b2a-c29f11e0c056/collection/45481784-e26456e3-b058-4aa9-9da3-cd2d57e85b94?action=share&source=collection_link&creator=45481784"
+	},
+	"item": [
+		{
+			"name": "\nhttp://localhost:8080/prospects/filter\n",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "targetList",
+							"type": "file",
+							"src": "/Users/brendenchoate/dev/demo/src/main/resources/filteredList.xlsx"
+						},
+						{
+							"key": "dataSource",
+							"type": "file",
+							"src": "/Users/brendenchoate/dev/demo/src/main/resources/datasource.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/prospects/filter",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"prospects",
+						"filter"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
