@@ -8,9 +8,9 @@ import java.util.*;
 
 public class ProspectManager {
 
-    public static List<Prospect> loadProspectsFromExcel(String filePath) throws IOException {
+    public static List<Prospect> readProspectsFromExcel(File file) throws IOException {
         List<Prospect> prospects = new ArrayList<>();
-        try (FileInputStream fis = new FileInputStream(filePath);
+        try (FileInputStream fis = new FileInputStream(file);
              Workbook workbook = new XSSFWorkbook(fis)) {
 
             Sheet sheet = workbook.getSheetAt(0);
@@ -19,77 +19,35 @@ public class ProspectManager {
 
                 String name = row.getCell(0).getStringCellValue();
                 String email = row.getCell(1).getStringCellValue();
-                boolean isDecisionMaker = row.getCell(2).getBooleanCellValue();
+                boolean decision = row.getCell(2).getBooleanCellValue();
 
-                prospects.add(new Prospect(name, email, isDecisionMaker));
+                prospects.add(new Prospect(name, email, decision));
             }
         }
         return prospects;
     }
 
-    public static void updateProspects(List<Prospect> existing, List<Prospect> updated) {
-        Map<String, Prospect> emailMap = new HashMap<>();
-        for (Prospect p : existing) {
-            emailMap.put(p.getEmail().toLowerCase(), p);
-        }
-
-        for (Prospect newProspect : updated) {
-            Prospect existingProspect = emailMap.get(newProspect.getEmail().toLowerCase());
-            if (existingProspect != null) {
-                // Update if data is different
-                if (!existingProspect.getName().equals(newProspect.getName())) {
-                    existingProspect.setName(newProspect.getName());
-                }
-                if (existingProspect.isDecisionMaker() != newProspect.isDecisionMaker()) {
-                    existingProspect.setDecisionMaker(newProspect.isDecisionMaker());
-                }
-            } else {
-                existing.add(newProspect); // Add new entry
-            }
-        }
-    }
-
-    public static void writeProspectsToExcel(String filePath, List<Prospect> prospects) throws IOException {
+    public static void writeProspectsToExcel(List<Prospect> list, File file) throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Prospects");
 
-        // Header row
+        // Write header
         Row header = sheet.createRow(0);
         header.createCell(0).setCellValue("Name");
         header.createCell(1).setCellValue("Email");
-        header.createCell(2).setCellValue("IsDecisionMaker");
+        header.createCell(2).setCellValue("Decision Maker");
 
-        // Data rows
         int rowNum = 1;
-        for (Prospect p : prospects) {
+        for (Prospect p : list) {
             Row row = sheet.createRow(rowNum++);
             row.createCell(0).setCellValue(p.getName());
             row.createCell(1).setCellValue(p.getEmail());
             row.createCell(2).setCellValue(p.isDecisionMaker());
         }
 
-        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             workbook.write(fos);
         }
         workbook.close();
-    }
-
-    // Example main method
-    public static void main(String[] args) {
-        try {
-            String existingFile = "ExistingProspects.xlsx";
-            String newFile = "NewProspects.xlsx";
-            String outputFile = "UpdatedProspects.xlsx";
-
-            List<Prospect> existingProspects = loadProspectsFromExcel(existingFile);
-            List<Prospect> newProspects = loadProspectsFromExcel(newFile);
-
-            updateProspects(existingProspects, newProspects);
-            writeProspectsToExcel(outputFile, existingProspects);
-
-            System.out.println("Updated prospects written to: " + outputFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
